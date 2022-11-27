@@ -6,7 +6,7 @@ class MobileMenu {
   }
 
   events() {
-    this.openButton.addEventListener("click", () => this.openMenu())
+    this.openButton?.addEventListener("click", () => this.openMenu())
   }
 
   openMenu() {

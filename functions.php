@@ -17,36 +17,27 @@ add_action('rest_api_init', 'university_custom_rest');
 
 function pageBanner($args = NULL) {
   
-  if (!$args['title']) {
+  /*if (!$args['title']) {
     $args['title'] = get_the_title();
   }
 
   if (!$args['subtitle']) {
     $args['subtitle'] = get_field('page_banner_subtitle');
-  }
-
-  if (!$args['photo']) {
-    if (get_field('page_banner_background_image') AND !is_archive() AND !is_home() ) {
-      $args['photo'] = get_field('page_banner_background_image')['sizes']['pageBanner'];
-    } else {
-      $args['photo'] = get_theme_file_uri('/images/ocean.jpg');
-    }
-  }
+  }*/
 
   ?>
   <div class="page-banner">
-    <div class="page-banner__bg-image" style="background-image: url(<?php echo $args['photo']; ?>);"></div>
+    <div class="page-banner__bg-image"></div>
     <div class="page-banner__content container container--narrow">
-      <h1 class="page-banner__title"><?php echo $args['title'] ?></h1>
+      <h1 class="page-banner__title">Hello</h1>
       <div class="page-banner__intro">
-        <p><?php echo $args['subtitle']; ?></p>
+        <p>This is a placeholder</p>
       </div>
     </div>  
   </div>
 <?php }
 
 function university_files() {
-  wp_enqueue_script('googleMap', '//maps.googleapis.com/maps/api/js?key=AIzaSyDin3iGCdZ7RPomFLyb2yqFERhs55dmfTI', NULL, '1.0', true);
   wp_enqueue_script('main-university-js', get_theme_file_uri('/build/index.js'), array('jquery'), '1.0', true);
   wp_enqueue_style('custom-google-fonts', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
   wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
@@ -174,11 +165,45 @@ function makeNotePrivate($data, $postarr) {
   return $data;
 }
 
-function bannerBlock() {
-  wp_register_script('bannerBlockScript', get_stylesheet_directory_uri() . '/build/banner.js', array('wp-blocks', 'wp-editor'));
-  register_block_type("mkoneblock/banner", array(
-    'editor_script' => 'bannerBlockScript'
-  ));
+class PlaceholderBlock {
+  function __construct($name) {
+    $this->name = $name;
+    add_action('init', [$this, 'onInit']);
+  }
+
+  function ourRenderCallback($attributes, $content) {
+    ob_start();
+    require get_theme_file_path("/blocks/{$this->name}.php");
+    return ob_get_clean();
+  }
+
+  function onInit() {
+    wp_register_script($this->name, get_stylesheet_directory_uri() . "/blocks/{$this->name}.js", array('wp-blocks', 'wp-editor'));
+    
+    register_block_type("mkoneblock/{$this->name}", array(
+      'editor_script' => $this->name,
+      'render_callback' => [$this, 'ourRenderCallback']
+    ));
+  }
 }
 
-add_action('init', 'bannerBlock');
+new PlaceholderBlock("blogindex");
+new PlaceholderBlock("singlepost");
+
+class JSXBlock {
+  function __construct($name)
+  {
+    $this->name = $name;
+    add_action('init', [$this, 'onInit']);
+  }
+
+  function onInit() {
+    wp_register_script($this->name, get_stylesheet_directory_uri() . "/build/{$this->name}.js", array('wp-blocks', 'wp-editor'));
+    register_block_type("mkoneblock/{$this->name}", array(
+      'editor_script' => $this->name
+    ));
+  }
+}
+
+new JSXBlock('banner');
+new JSXBlock('genericheading');
