@@ -5,7 +5,7 @@ pageBanner(array(
   'subtitle' => 'Keep up with our latest news.'
 ));
  ?>
-<div class="container container--narrow page-section">
+<div class="container page-section">
 <?php
   while(have_posts()) {
     the_post(); ?>

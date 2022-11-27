@@ -1,11 +1,11 @@
 <footer class="site-footer">
 
-    <div class="site-footer__inner container container--narrow">
+    <div class="site-footer__inner container">
 
       <div class="group">
 
         <div class="site-footer__col-one">
-          <h1 class="school-logo-text school-logo-text--alt-color"><a href="<?php echo site_url() ?>"><strong>Fictional</strong> University</a></h1>
+          <h1 class="school-logo-text school-logo-text--alt-color"><a href="<?php echo site_url() ?>"><strong>Tech</strong> Blog</a></h1>
           <p><a class="site-footer__link" href="#">555.555.5555</a></p>
         </div>
 

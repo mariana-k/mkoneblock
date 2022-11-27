@@ -4,7 +4,7 @@ function pageBanner($args = NULL) {
   ?>
   <div class="page-banner">
     <div class="page-banner__bg-image"></div>
-    <div class="page-banner__content container container--narrow">
+    <div class="page-banner__content container">
       <h1 class="page-banner__title">Hello</h1>
       <div class="page-banner__intro">
         <p>This is a placeholder</p>
