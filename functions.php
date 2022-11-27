@@ -189,7 +189,8 @@ class PlaceholderBlock {
 
 new PlaceholderBlock("blogindex");
 new PlaceholderBlock("singlepost");
-
+new PlaceholderBlock("header");
+new PlaceholderBlock("footer");
 class JSXBlock {
   function __construct($name)
   {
