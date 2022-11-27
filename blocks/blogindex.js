@@ -1,5 +1,5 @@
 wp.blocks.registerBlockType("mkoneblock/blogindex", {
-  title: "Fictional University Blog Index",
+  title: "Blog Index",
   edit: function () {
     return wp.element.createElement("div", { className: "placeholder-block" }, "Blog Index Placeholder")
   },

@@ -1,48 +1,71 @@
-import { InnerBlocks } from '@wordpress/block-editor'
-import { registerBlockType } from '@wordpress/blocks'
+import apiFetch from "@wordpress/api-fetch"
+import { Button, PanelBody, PanelRow } from "@wordpress/components"
+import { InnerBlocks, InspectorControls, MediaUpload, MediaUploadCheck } from "@wordpress/block-editor"
+import { registerBlockType } from "@wordpress/blocks"
+import { useEffect } from "@wordpress/element"
 
-const EditComponent = () => {
-    const useMeLater = (
-        <>
-          <h1 className="headline headline--large">Welcome!</h1>
-          <h2 className="headline headline--medium">This is a tech blog.</h2>
-          <h3 className="headline headline--small">
-            Why don&rsquo;t you check out the <strong>article</strong> you&rsquo;re interested in?
-          </h3>
-          <a href="#" className="btn btn--large btn--blue">
-            Learn More
-          </a>
-        </>
-    )
-    return (
-      <div className="page-banner">
-        <div className="page-banner__bg-image" style={{ backgroundImage: "url('/wp-content/themes/mkoneblock/images/library-hero.jpg')" }}></div>
-        <div className="page-banner__content container t-center c-white">
-          <InnerBlocks allowedBlocks={["mkoneblock/genericheading"]}/>
-        </div>
-      </div>
-    )
+registerBlockType("mkoneblock/banner", {
+  title: "Banner",
+  supports: {
+    align: ["full"]
+  },
+  attributes: {
+    align: { type: "string", default: "full" },
+    imgID: { type: "number" },
+    imgURL: { type: "string", default: banner.fallbackimage }
+  },
+  edit: EditComponent,
+  save: SaveComponent
+})
+
+function EditComponent(props) {
+  useEffect(
+    function () {
+      if (props.attributes.imgID) {
+        async function go() {
+          const response = await apiFetch({
+            path: `/wp/v2/media/${props.attributes.imgID}`,
+            method: "GET"
+          })
+          props.setAttributes({ imgURL: response.media_details.sizes.pageBanner.source_url })
+        }
+        go()
+      }
+    },
+    [props.attributes.imgID]
+  )
+
+  function onFileSelect(x) {
+    props.setAttributes({ imgID: x.id })
   }
 
-const SaveComponent = () => {
-    return (
-        <div className="page-banner">
-            <div className="page-banner__bg-image" style={{ backgroundImage: "url('/wp-content/themes/mkoneblock/images/library-hero.jpg')" }}></div>
-            <div className="page-banner__content container t-center c-white">
-                <InnerBlocks.Content />
-            </div>
+  return (
+    <>
+      <InspectorControls>
+        <PanelBody title="Background" initialOpen={true}>
+          <PanelRow>
+            <MediaUploadCheck>
+              <MediaUpload
+                onSelect={onFileSelect}
+                value={props.attributes.imgID}
+                render={({ open }) => {
+                  return <Button onClick={open}>Choose Image</Button>
+                }}
+              />
+            </MediaUploadCheck>
+          </PanelRow>
+        </PanelBody>
+      </InspectorControls>
+      <div className="page-banner">
+        <div className="page-banner__bg-image" style={{ backgroundImage: `url('${props.attributes.imgURL}')` }}></div>
+        <div className="page-banner__content container t-center c-white">
+          <InnerBlocks allowedBlocks={["mkoneblock/genericheading", "mkoneblock/genericbutton"]} />
         </div>
-    )
+      </div>
+    </>
+  )
 }
 
-registerBlockType('mkoneblock/banner', {
-    title: 'Banner',
-    supports: {
-        align: ['full']
-    },
-    attributes: {
-        align: {type: 'string', default: "full"}
-    },
-    edit: EditComponent,
-    save: SaveComponent
-})
+function SaveComponent() {
+  return <InnerBlocks.Content />
+}
